@@ -7,7 +7,7 @@
 A collection of utilities and games that I wrote.
 
 <p align="center">
-<img src="./diagram.svg" href="diagram.svg" alt="A diagram of this repository" width="50%">
+<img src="./diagram.svg" href="diagram.svg" alt="A diagram of this repository" width="50%" style="border-radius:4px">
 </p>
 
 ## Utilities
