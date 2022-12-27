@@ -6,7 +6,9 @@
 # utils-and-games
 A collection of utilities and games that I wrote.
 
-<img src="./diagram.svg" href="diagram.svg" alt="A diagram of this repository" width="50%" style="display: block; margin: 0 auto">
+<p align="center">
+<img src="./diagram.svg" href="diagram.svg" alt="A diagram of this repository" width="50%">
+</p>
 
 ## Utilities
 ### [Sparse Cloning](sparse-clone_%5Bshell%5D_%5Bgit%5D) ![](https://img.shields.io/badge/-shell-green)
