@@ -5,6 +5,9 @@ A collection of utilities and games that I wrote.
 ### [Sparse cloning](sparse-checkout%20%5Bshell%5D)
 A script that allows you to clone a git repository without downloading all files and folders. This is useful if you only need a few files from a large repository.
 
+### [Better Trithemius Cipher](better-trithemius-cipher_%5Bpy%5D)
+A python script that allows you to encrypt and decrypt a text using the Trithemius Cipher.
+
 ### [Cesar Code](cesar-code%20%5BC%5D)
 A C program that allows you to automatically decrypt a text using the Cesar Code.
 
