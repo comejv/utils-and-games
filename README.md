@@ -3,7 +3,7 @@
 ![GitHub repo size](https://img.shields.io/github/repo-size/comejv/utils-and-games)
 ![GitHub last commit](https://img.shields.io/github/last-commit/comejv/utils-and-games)
 
-# utils-and-games
+# Utils and Games
 A collection of utilities and games that I wrote.
 
 <p align="center" href="https://raw.githubusercontent.com/comejv/utils-and-games/main/diagram.svg">
