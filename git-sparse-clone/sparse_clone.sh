@@ -12,7 +12,7 @@ git sparse-checkout init --cone
 git checkout master
 
 echo "Adding selected dirs..."
-if [ $# > 0 ]; then
+if [ $# -gt 0 ]; then
   git sparse-checkout set "$@"
 else
   echo "No folder given. Nothing to checkout."
