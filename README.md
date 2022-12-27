@@ -1,7 +1,9 @@
-![GitHub language count](https://img.shields.io/github/languages/count/comejv/utils-and-games)
-![GitHub top language](https://img.shields.io/github/languages/top/comejv/utils-and-games)
-![GitHub repo size](https://img.shields.io/github/repo-size/comejv/utils-and-games)
-![GitHub last commit](https://img.shields.io/github/last-commit/comejv/utils-and-games)
+<p align="center">
+<img src="https://img.shields.io/github/languages/count/comejv/utils-and-games" alt="GitHub language count">
+<img src ="https://img.shields.io/github/languages/top/comejv/utils-and-games" alt="GitHub top language">
+<img src="https://img.shields.io/github/repo-size/comejv/utils-and-games" alt="GitHub repo size">
+<img src ="https://img.shields.io/github/last-commit/comejv/utils-and-games" alt="GitHub last commit">
+</p>
 
 # Utils and Games
 A collection of utilities and games that I wrote.
