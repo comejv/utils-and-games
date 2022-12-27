@@ -1,6 +1,8 @@
 from random import randint
-from unidecode import unidecode
+from time import sleep
 from dic import dic_accents
+from sys import stderr, executable, exit
+from subprocess import check_call, CalledProcessError
 
 # Support des couleurs ANSI dans windows
 from os import system
@@ -17,7 +19,55 @@ COLOR = {
 }
 
 
-def input_valide(secret: str, tour: int):
+def clear():
+    print("\x1b[2J\x1b[H")
+
+
+def wprint(text, *args, **kwargs) -> None:
+    print(COLOR["BOLD"] + "Warning :", text +
+          COLOR["ENDC"], *args, file=stderr, **kwargs)
+
+
+def binput(prompt) -> bool:
+    str_input = input(COLOR['BOLD'] + prompt + COLOR['ENDC'])
+    bool_input = ['true', '1', 't', 'y', 'yes', 'i',
+                  'false', '0', 'f', 'n', 'no', 'p']
+
+    while str_input not in bool_input:
+        str_input = input("\x1b[1F\x1b[K" +
+                          COLOR["BOLD"] + prompt + COLOR["ENDC"])
+    if str_input.lower() in bool_input[:6]:
+        return True
+    return False
+
+
+clear()
+try:
+    from unidecode import unidecode
+except ImportError:
+    wprint("Unidecode module necessary but not found.")
+    b_install = binput(
+        "Do you want to install it with pip or quit this game ?\n(y : install / n : quit))")
+    if b_install is True:
+        try:
+            check_call(
+                [executable, "-m", "pip", "install", "unidecode"])
+        except CalledProcessError:
+            wprint("Unable to install unidecode.")
+            print("Quitting...")
+            exit(1)
+        from unidecode import unidecode
+        print("Unidecode installed.")
+        sleep(1)
+        clear()
+
+    else:
+        wprint("Unidecode is necessary to run this game.")
+        print("Quitting...")
+        exit(1)
+
+
+def input_valide(secret: str, tour: int) -> tuple:
     """Prend une entrée standard et la renvoie quand elle satisfait les conditions, sauf si "stop"
 
     Args:
@@ -28,8 +78,8 @@ def input_valide(secret: str, tour: int):
     """
     prop = unidecode(input(f"Proposition {tour}/6 :\n"))
 
-    while (not(prop in dic_sans_accents) or len(prop) != len(secret)) and prop != "stop":
-        if not(prop in dic_sans_accents):
+    while (not (prop in dic_sans_accents) or len(prop) != len(secret)) and prop != "stop":
+        if not (prop in dic_sans_accents):
             prop = input(
                 "Votre mot n'est pas dans notre dictionnaire, réessayez :\n")
         elif len(prop) < len(secret):
@@ -43,7 +93,7 @@ def input_valide(secret: str, tour: int):
         return (list(prop), list(dic_accents[dic_sans_accents.index(prop)]))
 
 
-def output(secret: list, prop: list):
+def output(secret: list, prop: list) -> list:
     """Donne les indices pour chaque lettre
 
     Args:
@@ -54,7 +104,7 @@ def output(secret: list, prop: list):
         output (list): rouge mauvaise lettre, bleu mauvais emplacement, vert bon emplacement
     """
     output = []
-    secret_sans_accent = [unidecode(l) for l in secret]
+    secret_sans_accent = [unidecode(letter) for letter in secret]
     for i in range(len(secret)):
         if unidecode(secret[i]) == unidecode(prop[i]):
             output.append(COLOR["GREEN"] + "◉" + COLOR["ENDC"])
@@ -109,7 +159,9 @@ for e in dic_accents:
 print(COLOR["BOLD"] + "Trouvez le mot secret en proposant des mots de même taille !" + COLOR["ENDC"] +
       "\nUne lettre est absente du mot secret si marquée" + COLOR["RED"] + " rouge" + COLOR["ENDC"] +
       ", présente mais au mauvais emplacement avec" + COLOR["BLUE"] + " bleu" + COLOR["ENDC"] +
-      ", et au bon emplacement avec" + COLOR["GREEN"] + " vert" + COLOR["ENDC"] + ".\nEntrez 'stop' à tout moment pour quitter le jeu.",
+      ", et au bon emplacement avec" +
+      COLOR["GREEN"] + " vert" + COLOR["ENDC"] +
+      ".\nEntrez 'stop' à tout moment pour quitter le jeu.",
       "\nBonne chance !")
 
 
