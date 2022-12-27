@@ -1,5 +1,7 @@
 # utils-and-games
-A collection of utilities and games that I wrote. 
+A collection of utilities and games that I wrote.
+
+![Visualization of the codebase](./diagram.svg)
 
 ## Utilities
 ### [Sparse Cloning](sparse-clone_%5Bshell%5D_%5Bgit%5D)
