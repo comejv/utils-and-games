@@ -2,14 +2,19 @@ rurl="$1" && shift 1
 
 dirname=$(basename ${rurl%.git})
 
-git clone --filter=blob:none --no-checkout "$rurl"
+if [-d "$dirname"]; then
+  echo "$dirname existe déjà, ajout des fichiers demandés..."
+  cd $dirname
+else
+  git clone --filter=blob:none --no-checkout "$rurl"
+  cd $dirname
 
-cd $dirname
+  echo "Initializing sparse-checkout..."
+  git sparse-checkout init --cone
 
-echo "Initializing sparse-checkout..."
-git sparse-checkout init --cone
+  git checkout HEAD
+fi
 
-git checkout HEAD
 
 echo "Adding selected dirs..."
 if [ $# -gt 0 ]; then
