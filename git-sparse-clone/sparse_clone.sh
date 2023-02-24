@@ -9,7 +9,7 @@ cd $dirname
 echo "Initializing sparse-checkout..."
 git sparse-checkout init --cone
 
-git checkout master
+git checkout HEAD
 
 echo "Adding selected dirs..."
 if [ $# -gt 0 ]; then
