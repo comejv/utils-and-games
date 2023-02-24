@@ -1,26 +1,33 @@
-rurl="$1" && shift 1
+#!/bin/bash
 
-dirname=$(basename ${rurl%.git})
+# Exit immediately on error
+set -e
 
-if [-d "$dirname"]; then
-  echo "$dirname existe déjà, ajout des fichiers demandés..."
-  cd $dirname
-else
-  git clone --filter=blob:none --no-checkout "$rurl"
-  cd $dirname
+# Get repository URL and shift the arguments
+rurl="$1"
+shift 1
 
-  echo "Initializing sparse-checkout..."
+# Extract the directory name from the repository URL
+dirname=$(basename "${rurl%.git}")
+
+if [ ! -d "$dirname" ]; then
+  # If the directory doesn't exist, clone the repository and initialize sparse checkout
+  git clone --filter=blob:none --no-checkout "$rurl" "$dirname"
+  cd "$dirname"
   git sparse-checkout init --cone
-
   git checkout HEAD
+
+  checkoutarg="set"
+else
+  cd "$dirname"
+  checkoutarg="add"
 fi
 
-
-echo "Adding selected dirs..."
+# Add the specified files, if any
 if [ $# -gt 0 ]; then
-  git sparse-checkout set "$@"
+  git sparse-checkout "$checkoutarg" "$@"
 else
-  echo "No folder given. Nothing to checkout."
+  echo "No folders given. Nothing to checkout."
 fi
 
 echo "Done, sparse-cloned $dirname."
