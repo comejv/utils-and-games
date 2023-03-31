@@ -76,16 +76,18 @@ def input_valide(secret: str, tour: int) -> tuple:
     Returns:
         tuple: mot sans accents et mot avec accents du dic
     """
-    prop = unidecode(input(f"Proposition {tour}/6 :\n"))
-
-    while (not (prop in dic_sans_accents) or len(prop) != len(secret)) and prop != "stop":
-        if not (prop in dic_sans_accents):
-            prop = input(
-                "Votre mot n'est pas dans notre dictionnaire, réessayez :\n")
+    prop = unidecode(input(f"Proposition {tour}/6 :\n")).lower()
+    prop_in_dic = prop in dic_sans_accents
+    while (not prop_in_dic or len(prop) != len(secret)) and prop != "stop":
+        if not prop_in_dic:
+            prop = unidecode(input(
+                "Votre mot n'est pas dans notre dictionnaire, réessayez :\n")).lower()
         elif len(prop) < len(secret):
-            prop = input("Mot trop court :\n")
+            prop = unidecode(input("Mot trop court :\n")).lower()
         elif len(prop) > len(secret):
-            prop = input("Mot trop long :\n")
+            prop = unidecode(input("Mot trop long :\n")).lower()
+        prop_in_dic = prop in dic_sans_accents
+
     if prop == "stop":
         return "stop"
     else:
@@ -104,12 +106,14 @@ def output(secret: list, prop: list) -> list:
         output (list): rouge mauvaise lettre, bleu mauvais emplacement, vert bon emplacement
     """
     output = []
-    secret_sans_accent = [unidecode(letter) for letter in secret]
+    secret_sans_accent = [letter for letter in secret]
     for i in range(len(secret)):
-        if unidecode(secret[i]) == unidecode(prop[i]):
+        if prop[i] == secret_sans_accent[i]:
             output.append(COLOR["GREEN"] + "◉" + COLOR["ENDC"])
-        elif unidecode(prop[i]) in secret_sans_accent:
+            secret_sans_accent[i] = "*"
+        elif prop[i] in secret_sans_accent:
             output.append(COLOR["BLUE"] + "◉" + COLOR["ENDC"])
+            secret_sans_accent[i] = "*"
         else:
             output.append(COLOR["RED"] + "◉" + COLOR["ENDC"])
     return output
@@ -147,8 +151,10 @@ def main():
 
         print(COLOR["BOLD"] + ' '.join(map(str, prop_mot[1])))
         print(*indices, sep=' ')
+
     print(COLOR["RED"] + "\nDomage, " + COLOR["ENDC"] + "vous avez épuisé votre nombre de chances.\nLe mot était ",
           COLOR["BOLDR"] + ' '.join(map(str, mot_secret_accents)) + COLOR["ENDC"])
+
     return input("Pour rejouer entrez 'oui'.\n")
 
 
@@ -159,8 +165,7 @@ for e in dic_accents:
 print(COLOR["BOLD"] + "Trouvez le mot secret en proposant des mots de même taille !" + COLOR["ENDC"] +
       "\nUne lettre est absente du mot secret si marquée" + COLOR["RED"] + " rouge" + COLOR["ENDC"] +
       ", présente mais au mauvais emplacement avec" + COLOR["BLUE"] + " bleu" + COLOR["ENDC"] +
-      ", et au bon emplacement avec" +
-      COLOR["GREEN"] + " vert" + COLOR["ENDC"] +
+      ", et au bon emplacement avec" + COLOR["GREEN"] + " vert" + COLOR["ENDC"] +
       ".\nEntrez 'stop' à tout moment pour quitter le jeu.",
       "\nBonne chance !")
 
