@@ -20,6 +20,10 @@ A collection of utilities and games that I wrote.
 ### [Sparse Cloning](git-sparse-clone) ![](https://img.shields.io/badge/-shell-green)
 A script that allows you to clone a git repository without downloading all files and folders. This is useful if you only need a few files from a large repository.
 
+### [Py Format](py-format) ![](https://img.shields.io/badge/-python-blue)
+A python module that contains a few functions that allow you to format your output.
+i.e. bold, italic, error, blinking, etc.
+
 ### [Better Trithemius Cipher](better-trithemius-cipher) ![](https://img.shields.io/badge/-python-blue)
 A python script that allows you to encrypt and decrypt a text using the Trithemius Cipher.
 
