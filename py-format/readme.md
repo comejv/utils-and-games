@@ -23,12 +23,18 @@ Here is a list of functions included in this module:
 - Description: Displays *args in bold. \*\*kwargs will be passed to python's print function.
 - Usage: `pbold("Your Text Here")` or `pbold(*list_to_unpack)` etc.
 - Output : **Your Text Here**
+  
+### pwarn(\*args, \*\*kwargs)
+
+- Description: Displays *args in yellow and bold. \*\*kwargs will be passed to python's print function.
+- Usage: `pwarn("Your Text Here")` or `pwarn(*list_to_unpack)` etc.
+- Output : <span style="color:yellow">**Your Text Here**</span> (but actually yellow and bold)
 
 ### perror(\*args, \*\*kwargs)
 
 - Description: Displays *args in red and bold. \*\*kwargs will be passed to python's print function.
 - Usage: `perror("Your Text Here")` or `perror(*list_to_unpack)` etc.
-- Output : <span style="color:red">**Your Text Here**</span>
+- Output : <span style="color:red">**Your Text Here**</span> (but actually red and bold)
 
 ### pblink(\*args, \*\*kwargs)
 
