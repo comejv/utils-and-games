@@ -23,6 +23,13 @@ def pbold(*args, **kwargs) -> None:
     print("\x1b[22m", end="")
 
 
+def pwarn(*args, **kwargs) -> None:
+    """Prints given arguments in bold yellow. Stdout unless specified."""
+    print("\x1b[33m", end="")
+    print(*args, **kwargs)
+    print("\x1b[39m", end="")
+
+
 def perror(*args, **kwargs) -> None:
     """Prints given arguments in bold red. Stdout unless specified."""
     print("\x1b[31m", end="")
@@ -111,3 +118,14 @@ def form_input(inputs: list) -> list[str]:
             clear()
             return None
     return answers
+
+
+if __name__ == "__main__":
+    clear()
+    pitalic("This is italic")
+    pbold("This is bold")
+    pwarn("This is a warning")
+    perror("This is an error")
+    pblink("This is blinking")
+    print(bool_input("Do you like this module ?"))
+    print_table(data=[["Hello", "World"], ["This", "Is", "A", "Table"]], headers=["A", "B", "C", "D"])
