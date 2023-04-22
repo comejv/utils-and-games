@@ -103,3 +103,4 @@ If user inputs A, B, C, ... L, the output will be:
 | G    | H   | I        |
 | J    | K   | L        |
 ```
+(with headers in bold)
