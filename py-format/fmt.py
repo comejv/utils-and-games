@@ -27,14 +27,14 @@ def pwarn(*args, **kwargs) -> None:
     """Prints given arguments in bold yellow. Stdout unless specified."""
     print("\x1b[1;33m", end="")
     print(*args, **kwargs)
-    print("\x1b[22;43m", end="")
+    print("\x1b[22;39m", end="")
 
 
 def perror(*args, **kwargs) -> None:
     """Prints given arguments in bold red. Stdout unless specified."""
     print("\x1b[1;31m", end="")
     print(*args, **kwargs)
-    print("\x1b[22;41m", end="")
+    print("\x1b[22;39m", end="")
 
 
 def pblink(s: str, **kwargs) -> None:
