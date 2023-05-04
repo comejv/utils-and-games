@@ -1,12 +1,35 @@
-name: Create diagram
+name: Update diagram
+
 on:
-  workflow_dispatch: {}
   push:
     paths:
-      - '*/**'
+      - '**/*'
+  workflow_dispatch:
+
 jobs:
-  get_data:
+  check_new_or_deleted_files:
     runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Check for new or deleted files
+        run: |
+          git fetch origin ${{ github.base_ref }}
+          NEW_OR_DELETED_FILES=$(git diff --diff-filter=AD --name-only FETCH_HEAD)
+          if [ -n "$NEW_OR_DELETED_FILES" ]; then
+            echo "New or deleted file(s) detected:"
+            echo "$NEW_OR_DELETED_FILES"
+            echo "TRIGGER_GET_DATA=true" >> $GITHUB_ENV
+          else
+            echo "No new or deleted files detected"
+            echo "TRIGGER_GET_DATA=false" >> $GITHUB_ENV
+          fi
+
+  get_data:
+    needs: check_new_or_deleted_files
+    runs-on: ubuntu-latest
+    if: ${{ needs.check_new_or_deleted_files.outputs.trigger_get_data == 'true' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@master
