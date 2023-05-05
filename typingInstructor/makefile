@@ -1,30 +1,28 @@
 CC = gcc
-CFLAGS = -Wall -Wextra
-LDFLAGS = -lncurses
+CFLAGS = -Wall -Wextra -g
+LDFLAGS = -lncurses -lcurl
 
 OBJ_DIR = obj
-SRC_DIR = interface
+SRC_DIRS = interface curl common
 TARGET = typingInstructor
 
-_OBJ = userInterface.o typingInstructor.o
-OBJ = $(patsubst %,$(OBJ_DIR)/%,$(_OBJ))
+SRCS = $(wildcard $(addsuffix /*.c, $(SRC_DIRS))) typingInstructor.c
+OBJS = $(patsubst %.c,$(OBJ_DIR)/%.o,$(SRCS))
 
-all: create_obj_dir $(TARGET) clean
+all: create_obj_dir $(TARGET)
 
 create_obj_dir:
-	@mkdir -p $(OBJ_DIR)
-
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
-	$(CC) -c -o $@ $< $(CFLAGS)
+	@mkdir -p $(OBJ_DIR)/interface
+	@mkdir -p $(OBJ_DIR)/curl
+	@mkdir -p $(OBJ_DIR)/common
 
 $(OBJ_DIR)/%.o: %.c
 	$(CC) -c -o $@ $< $(CFLAGS)
 
-$(TARGET): $(OBJ)
+$(TARGET): $(OBJS)
 	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS)
 
 .PHONY: clean
 
 clean:
-	rm -f $(OBJ_DIR)/*.o
-	rmdir $(OBJ_DIR)
+	rm -rf $(OBJ_DIR)
