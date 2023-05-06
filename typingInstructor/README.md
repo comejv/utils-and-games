@@ -1,5 +1,6 @@
 # Typing Instructor
 ## Description
+> IMPORTANT : this is a work in progress and very not ready at all, this readme is what the goal is, not the current state
 Typing Instructor is a command-line application designed to help programmers improve their typing skills by practicing with real-world code examples. The motivation behind this project was to create a more engaging and productive way for programmers to enhance their typing speed and accuracy while working with actual code snippets.
 
 ## Table of Contents
@@ -8,11 +9,11 @@ Typing Instructor is a command-line application designed to help programmers imp
   - [Table of Contents](#table-of-contents)
   - [Installation](#installation)
   - [Usage](#usage)
-  - [Credits](#credits)
-  - [License](#license)
   - [Features](#features)
   - [How to Contribute](#how-to-contribute)
   - [Tests](#tests)
+  - [Credits](#credits)
+  - [License](#license)
 
 ## Installation
 To install the project, follow these steps:
@@ -40,7 +41,7 @@ The main screen of the application allows you to choose between different option
 
 <p align="center">
 <kbd>
-<img src="./images/main_screen.png" alt="Main screen" width="70%">
+<img src="./images/main_screen.png" alt="Main screen" width="60%">
 </kbd>
 </p>
 
@@ -51,13 +52,6 @@ During the typing practice session, the application will display a code snippet 
 <img src="./images/typing_session.png" alt="Typing session" width="70%">
 </kbd>
 </p>
-
-## Credits
-- [Curl](https://curl.haxx.se/) library for downloading code examples
-- [ncurses](https://invisible-island.net/ncurses/) library for user interface
-
-## License
-This project is licensed under the [MIT License](https://choosealicense.com/licenses/mit/).
 
 ## Features
 - Download code examples from specified URLs
@@ -74,4 +68,11 @@ If you would like to contribute to the project, please follow these guidelines:
 
 ## Tests
 Currently, there are no tests available for the application. Contributions to create and document tests are highly appreciated.
+
+## Credits
+- [Curl](https://curl.haxx.se/) library for downloading code examples
+- [ncurses](https://invisible-island.net/ncurses/) library for user interface
+
+## License
+This project is licensed under the [MIT License](https://choosealicense.com/licenses/mit/).
 
