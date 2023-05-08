@@ -22,3 +22,12 @@ void verbose(char *fmt, ...)
         va_end(ap);
     }
 }
+
+void freeStringArray(char **array)
+{
+    for (int i = 0; array[i]; ++i)
+    {
+        free(array[i]);
+    }
+    free(array);
+}

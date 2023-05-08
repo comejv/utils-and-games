@@ -2,7 +2,8 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include "interface/userInterface.h"
-#include "curl/download.h"
+#include "codeFiles/download.h"
+#include "codeFiles/fileSys.h"
 #include "common/util.h"
 
 int main(int argc, char *argv[])
@@ -27,8 +28,13 @@ int main(int argc, char *argv[])
     }
 
     // Read code urls from conf file
-    int num_urls;
-    char **urls = read_urls_from_file("data/code_sources.conf", &num_urls);
+    int num_urls = 0;
+    verbose("[INFO]: Reading urls from conf file...\n");
+    char **urls = readUrlsFromFile("data/code_sources.conf", &num_urls);
+    if (!num_urls)
+    {
+        verbose("[WARNING]: No url read from conf file\n");
+    }
 
     // Check that folder exists
     struct stat sb;
@@ -36,16 +42,19 @@ int main(int argc, char *argv[])
     if (stat(folder, &sb) == -1)
     {
         mkdir("data/code_examples", 0777);
-        verbose("INFO: Created data/code_examples\n");
+        verbose("[INFO]: Created data/code_examples\n");
     }
 
     // Download urls
-    int i;
-    for (i = 0; i < num_urls; ++i)
+    for (int i = 0; i < num_urls; ++i)
     {
-        download_raw_file(urls[i], "data/code_examples");
-        verbose("INFO: Downloaded %s\n", urls[i]);
+        download_raw_file(urls[i], folder);
+        verbose("[INFO]: Downloaded %s\n", urls[i]);
     }
+
+    // Update file sys
+    verbose("[INFO]: Updating file system with %s...\n", folder);
+    readDir(folder);
 
     // Initialize curses
     initscr();
@@ -55,7 +64,19 @@ int main(int argc, char *argv[])
     start_color();
     curs_set(0);
 
+    // Check screen size and colour support
     check_screen_size();
+    if (has_colors() == TRUE)
+    {
+        // Set colors
+        init_pair(0, COLOR_BLACK, COLOR_WHITE);
+        init_pair(1, COLOR_WHITE, COLOR_CYAN);
+        init_pair(2, COLOR_BLACK, COLOR_RED);
+    }
+    else
+    {
+        verbose("[WARNING]: Colours are not supported by your terminal\n");
+    }
 
     int menu = 0;
     while ((menu = main_screen()) != 4)
@@ -76,4 +97,8 @@ int main(int argc, char *argv[])
         }
     }
     endwin();
+
+    freeFiles(getFiles(ALL_LANG));
+
+    return 0;
 }

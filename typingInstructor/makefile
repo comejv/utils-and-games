@@ -1,9 +1,9 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -g
+CFLAGS = -Wall -Wextra -std=gnu99 -g
 LDFLAGS = -lncurses -lcurl
 
 OBJ_DIR = obj
-SRC_DIRS = interface curl common
+SRC_DIRS = interface codeFiles common
 TARGET = typingInstructor
 
 SRCS = $(wildcard $(addsuffix /*.c, $(SRC_DIRS))) typingInstructor.c
@@ -13,7 +13,7 @@ all: create_obj_dir $(TARGET)
 
 create_obj_dir:
 	@mkdir -p $(OBJ_DIR)/interface
-	@mkdir -p $(OBJ_DIR)/curl
+	@mkdir -p $(OBJ_DIR)/codeFiles
 	@mkdir -p $(OBJ_DIR)/common
 
 $(OBJ_DIR)/%.o: %.c

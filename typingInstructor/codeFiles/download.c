@@ -1,33 +1,5 @@
 #include "download.h"
 
-char **read_urls_from_file(const char *file_path, int *num_urls)
-{
-    FILE *fp;
-    char **urls = NULL;
-    char line[512];
-    int count = 0;
-
-    fp = fopen(file_path, "r");
-    if (!fp)
-    {
-        verbose("Failed to open input file: %s\n", file_path);
-        return NULL;
-    }
-
-    while (fgets(line, sizeof(line), fp))
-    {
-        ++count;
-        urls = realloc(urls, count * sizeof(char *));
-        urls[count - 1] = strdup(line);
-        // Remove newline
-        urls[count - 1][strlen(line) - 1] = '\0';
-    }
-
-    fclose(fp);
-    *num_urls = count;
-    return urls;
-}
-
 static size_t write_data(void *ptr, size_t size, size_t nmemb, FILE *stream)
 {
     size_t written = fwrite(ptr, size, nmemb, stream);
@@ -43,7 +15,7 @@ int download_raw_file(const char *url, const char *output_dir)
     curl = curl_easy_init();
     if (!curl)
     {
-        verbose("Failed to initialize libcurl\n");
+        verbose("[ERROR]: Failed to initialize libcurl\n");
         return 1;
     }
 
@@ -64,10 +36,16 @@ int download_raw_file(const char *url, const char *output_dir)
     char *output_path = malloc(sizeof(char) * (strlen(output_dir) + strlen(output_file_name) + 1));
     sprintf(output_path, "%s/%s", output_dir, output_file_name);
 
+    if (access(output_path, F_OK) == 0)
+    {
+        verbose("[INFO]: File already exists, not downloaded: %s\n", output_path);
+        return 0;
+    }
+
     fp = fopen(output_path, "wb");
     if (!fp)
     {
-        verbose("Failed to open output file: %s\n", output_path);
+        verbose("[ERROR]: Failed to open output file: %s\n", output_path);
         return 1;
     }
 
@@ -78,7 +56,7 @@ int download_raw_file(const char *url, const char *output_dir)
 
     if (res != CURLE_OK)
     {
-        verbose("curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+        verbose("[ERROR]: curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
     }
 
     fclose(fp);
