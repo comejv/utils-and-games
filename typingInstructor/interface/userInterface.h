@@ -3,6 +3,8 @@
 
 #include <ncurses.h>
 #include <string.h>
+#include <stdio.h>
+#include "../codeFiles/fileSys.h"
 
 #define MIN_WIDTH 100
 #define MIN_HEIGHT 40

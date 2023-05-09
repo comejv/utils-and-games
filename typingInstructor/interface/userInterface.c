@@ -95,11 +95,7 @@ int main_screen()
     int screen_width = getmaxx(stdscr);
     int screen_height = getmaxy(stdscr);
 
-    // Set colors
-    init_pair(1, COLOR_WHITE, COLOR_CYAN);
-    init_pair(2, COLOR_BLACK, COLOR_RED);
     wbkgd(stdscr, COLOR_PAIR(1));
-
     mvprintw(screen_height / 5, (screen_width - 35) / 2, "Welcome to the Typing Instructor!");
     mvprintw(screen_height - 1, 0, "Use arrow keys to go up and down, press enter to select a choice");
     mvprintw(screen_height - 1, screen_width - 22, "(c) Côme VINCENT 2023");
@@ -128,10 +124,8 @@ int language_screen()
     WINDOW *menu_win;
     int highlight = 1;
 
-    char *choices[] = {
-        "PYTHON",
-        "C",
-    };
+    char **choices = availableLanguages();
+
     int n_choices = sizeof(choices) / sizeof(char *);
 
     int screen_width = getmaxx(stdscr);
@@ -153,13 +147,97 @@ int language_screen()
 
     refresh();
     print_menu(menu_win, highlight, choices, n_choices);
-    return menu_input(menu_win, highlight, choices, n_choices);
+    int ret = menu_input(menu_win, highlight, choices, n_choices);
+    freeStringArray(choices);
+    return ret;
+}
+
+void wprintFileContent(const char *filename, WINDOW *win)
+{
+    FILE *file = fopen(filename, "r");
+    if (!file)
+    {
+        verbose("[ERROR]: Failed to open file %s\n", filename);
+        return;
+    }
+
+    int lines = 0;
+    int max_line_length = 0;
+    char line[1024];
+
+    // Get the number of lines
+    while (fgets(line, sizeof(line), file))
+    {
+        lines++;
+        int line_length = strlen(line);
+        if (line_length > max_line_length)
+        {
+            max_line_length = line_length;
+        }
+    }
+
+    // Print the file content
+    win = newwin(lines, max_line_length, 0, 0);
+    int current_line = 0;
+    while (fgets(line, sizeof(line), file))
+    {
+        mvwprintw(win, current_line, 0, "%s", line);
+        current_line++;
+    }
+    fclose(file);
+
+    wrefresh(win);
 }
 
 int instructor_screen()
 {
-    clear();
     int language = language_screen();
+
+    clear();
+
+    check_screen_size();
+
+    WINDOW *file_win;
+    WINDOW *text_win;
+    WINDOW *scroller_win;
+    WINDOW *stats_win;
+
+    int screen_width = getmaxx(stdscr);
+    int screen_height = getmaxy(stdscr);
+
+    int file_choice = 0;
+
+    char *stats_message = "WPM: 0 --- Accuracy: 0%";
+
+    CodeFiles *files = getFiles(language);
+    CodeFile file;
+    file.language = files->files[file_choice].language;
+    file.name = strdup(files->files[file_choice].name);
+    file.path = strdup(files->files[file_choice].path);
+    free(files->files);
+    free(files);
+
+    // Get file content
+    wprintFileContent(file.path, text_win);
+
+    file_win = newwin(screen_height - 1, 30, 0, 0);
+    scroller_win = subwin(file_win, screen_height - 1, screen_width - 30, 0, 0);
+    scrollok(scroller_win, TRUE);
+    stats_win = newwin(1, screen_width, screen_height - 1, 0);
+
+    wbkgd(file_win, COLOR_PAIR(1));
+    wbkgd(scroller_win, COLOR_PAIR(0));
+    wbkgd(stats_win, COLOR_PAIR(2));
+
+    refresh();
+    wrefresh(file_win);
+    wrefresh(scroller_win);
+    wrefresh(stats_win);
+
+    // Initialise window contents
+    mvwprintw(stats_win, 0, (screen_width - 23) / 2, stats_message);
+
+    getch();
 
     return 0;
 }
