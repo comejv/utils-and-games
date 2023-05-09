@@ -1,6 +1,7 @@
 #include "fileSys.h"
 
 static CodeFiles *G_files = NULL;
+static char langExt[NUM_LANG][4] = {"c", "py", "rs"};
 
 char **readUrlsFromFile(const char *file_path, int *num_urls)
 {
@@ -60,11 +61,10 @@ void readDir(char *dirPath)
         CodeFile *cf = (CodeFile *)malloc(sizeof(CodeFile));
 
         // Allocate and fill in path
-        cf->path = malloc(sizeof(char) * (strlen("./data/") + strlen(file->d_name) + 1));
-        sprintf(cf->path, "./data/%s", file->d_name);
+        cf->path = malloc(sizeof(char) * (21 + strlen(file->d_name) + 1));
+        sprintf(cf->path, "./data/code_examples/%s", file->d_name);
 
         // Find file extension and use as language
-        char langExt[NUM_LANG][4] = {"c", "py", "rs"};
         cf->language = UNKOWN_LANG;
         char *ext = strrchr(cf->path, '.');
         if (ext)
@@ -124,11 +124,28 @@ CodeFiles *getFiles(int language)
 
 char **availableLanguages()
 {
-    char **languages = NULL;
+    u_int32_t l = 0;
+
+    // Find languages without keeping duplicates
+    // By ORing the bit with position = language num
     for (int i = 0; i < G_files->num_files; ++i)
     {
-        languages = realloc(languages, (G_files->num_files + 1) * sizeof(char *));
-        languages[i] = strdup(G_files->files[i].name);
+        l |= 1 << G_files->files[i].language;
+    }
+
+    // Allocate and fill in languages
+    unsigned int count = 0, i = 0;
+    char **languages = NULL;
+
+    while (l)
+    {
+        if (l & 1)
+        {
+            languages = realloc(languages, (++count) * sizeof(char *));
+            languages[count - 1] = strdup(langExt[i - 1]);
+        }
+        l >>= 1;
+        i++;
     }
     return languages;
 }
