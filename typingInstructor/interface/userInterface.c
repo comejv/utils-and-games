@@ -1,22 +1,25 @@
 #include "userInterface.h"
 
-void check_screen_size()
+void check_screen_size(int min_width, int min_height)
 {
     int max_x = getmaxx(stdscr);
     int max_y = getmaxy(stdscr);
 
-    while (max_x < MIN_WIDTH || max_y < MIN_HEIGHT)
+    min_width = min_width ? min_width : MIN_WIDTH;
+    min_height = min_height ? min_height : MIN_HEIGHT;
+
+    while (max_x < min_width || max_y < min_height)
     {
         clear();
         mvprintw(max_y / 2 - 1, (max_x - 28) / 2,
                  "Current terminal size: %dx%d", max_x, max_y);
         mvprintw(max_y / 2, (max_x - 45) / 2,
-                 "Please resize your terminal to at least %dx%d", MIN_WIDTH, MIN_HEIGHT);
+                 "Please resize your terminal to at least %dx%d", min_width, min_height);
         mvprintw(max_y / 2 + 1, (max_x - 25) / 2,
                  "Press any key to update...");
         max_x = getmaxx(stdscr);
         max_y = getmaxy(stdscr);
-        getch();
+        wgetch(stdscr);
     }
 }
 
@@ -72,6 +75,7 @@ int menu_input(WINDOW *menu_win, int highlight, char *choices[], int n_choices)
         case ENTER:
             return highlight;
         default:
+            refresh();
             break;
         }
         print_menu(menu_win, highlight, choices, n_choices);
@@ -108,7 +112,6 @@ int main_screen()
     int starty = (screen_height - box_height) / 2;
 
     menu_win = newwin(box_height, box_width, starty, startx - 1);
-    keypad(menu_win, TRUE);
     wbkgd(menu_win, COLOR_PAIR(2));
     refresh();
     print_menu(menu_win, highlight, choices, n_choices);
@@ -117,7 +120,7 @@ int main_screen()
 
 int language_screen()
 {
-    check_screen_size();
+    check_screen_size(0, 0);
 
     clear();
 
@@ -142,7 +145,6 @@ int language_screen()
     int starty = (screen_height - box_height) / 2;
 
     menu_win = newwin(box_height, box_width, starty, startx - 1);
-    keypad(menu_win, TRUE);
     wbkgd(menu_win, COLOR_PAIR(2));
 
     refresh();
@@ -152,41 +154,34 @@ int language_screen()
     return ret;
 }
 
-void wprintFileContent(const char *filename, WINDOW *win)
+void wprintFileContent(const char *filepath, WINDOW **win, int pad_width)
 {
-    FILE *file = fopen(filename, "r");
+    FILE *file = fopen("makefile", "r");
     if (!file)
     {
-        verbose("[ERROR]: Failed to open file %s\n", filename);
+        verbose("[ERROR]: Failed to open file %s\n", filepath);
         return;
     }
 
-    int lines = 0;
-    int max_line_length = 0;
-    char line[1024];
+    char **line = NULL;
 
-    // Get the number of lines
-    while (fgets(line, sizeof(line), file))
-    {
-        lines++;
-        int line_length = strlen(line);
-        if (line_length > max_line_length)
-        {
-            max_line_length = line_length;
-        }
-    }
+    // Count number of lines in file
+    size_t num_lines = count_lines(file);
 
-    // Print the file content
-    win = newwin(lines, max_line_length, 0, 0);
-    int current_line = 0;
-    while (fgets(line, sizeof(line), file))
+    // Initialize pad
+    *win = newpad(num_lines + 7, pad_width);
+
+    int current_line = 4;
+    // Print file name
+    mvwprintw(*win, current_line, (pad_width - strlen(filepath)) / 2, "%s", filepath);
+    current_line += 3;
+    // Print file content
+    while (getline(line, 0, file) != -1)
     {
-        mvwprintw(win, current_line, 0, "%s", line);
-        current_line++;
+        mvwprintw(*win, current_line++, 0, "%s", line);
     }
     fclose(file);
-
-    wrefresh(win);
+    free(line);
 }
 
 int instructor_screen()
@@ -195,15 +190,14 @@ int instructor_screen()
 
     clear();
 
-    check_screen_size();
-
-    WINDOW *file_win;
-    WINDOW *text_win;
-    WINDOW *scroller_win;
+    WINDOW *file_browse_win;
+    WINDOW *code_win;
     WINDOW *stats_win;
 
     int screen_width = getmaxx(stdscr);
     int screen_height = getmaxy(stdscr);
+    int file_browse_win_width = 30;
+    int code_win_width = screen_width - file_browse_win_width;
 
     int file_choice = 0;
 
@@ -218,26 +212,49 @@ int instructor_screen()
     free(files);
 
     // Get file content
-    wprintFileContent(file.path, text_win);
+    wprintFileContent(file.path, &code_win, code_win_width);
 
-    file_win = newwin(screen_height - 1, 30, 0, 0);
-    scroller_win = subwin(file_win, screen_height - 1, screen_width - 30, 0, 0);
-    scrollok(scroller_win, TRUE);
+    file_browse_win = newwin(screen_height - 1, file_browse_win_width, 0, 0);
     stats_win = newwin(1, screen_width, screen_height - 1, 0);
 
-    wbkgd(file_win, COLOR_PAIR(1));
-    wbkgd(scroller_win, COLOR_PAIR(0));
+    wbkgd(stdscr, COLOR_PAIR(0));
+    wbkgd(file_browse_win, COLOR_PAIR(1));
+    wbkgd(code_win, COLOR_PAIR(0));
     wbkgd(stats_win, COLOR_PAIR(2));
 
+    // Initialise window contents
+    mvwprintw(stats_win, 0, (screen_width - 23) / 2, "%s", stats_message);
+
     refresh();
-    wrefresh(file_win);
-    wrefresh(scroller_win);
+    prefresh(code_win, 0, 0, 0, file_browse_win_width, screen_height - 2, screen_width - 1);
+    wrefresh(file_browse_win);
     wrefresh(stats_win);
 
-    // Initialise window contents
-    mvwprintw(stats_win, 0, (screen_width - 23) / 2, stats_message);
+    int c;
 
-    getch();
+    while ((c = getch()) != KEY_BACKSPACE)
+    {
+        static int pad_top_line = 0;
+        switch (c)
+        {
+        case 'a':
+            if (pad_top_line > 0)
+            {
+                pad_top_line--;
+                prefresh(code_win, pad_top_line, 0, 0, file_browse_win_width, screen_height - 2, screen_width - 1);
+            }
+            break;
+        case 'z':
+            if (pad_top_line < screen_height - 1)
+            {
+                pad_top_line++;
+                prefresh(code_win, pad_top_line, 0, 0, file_browse_win_width, screen_height - 2, screen_width - 1);
+            }
+            break;
+        default:
+            break;
+        }
+    }
 
     return 0;
 }

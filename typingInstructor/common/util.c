@@ -31,3 +31,37 @@ void freeStringArray(char **array)
     }
     free(array);
 }
+
+size_t count_lines(FILE *fp)
+{
+    struct statfs fsInfo = {0};
+    int fd = fileno(fp);
+    long optimalSize;
+    size_t line_count = 0;
+
+    if (fstatfs(fd, &fsInfo) == -1)
+    {
+        optimalSize = 4 * 1024 * 1024;
+    }
+    else
+    {
+        optimalSize = fsInfo.f_bsize;
+    }
+
+    char *buffer = malloc(optimalSize);
+    size_t bytesRead;
+
+    while ((bytesRead = fread(buffer, 1, optimalSize, fp)) > 0)
+    {
+        for (size_t i = 0; i < bytesRead; i++)
+        {
+            if (buffer[i] == '\n')
+            {
+                line_count++;
+            }
+        }
+    }
+
+    free(buffer);
+    return line_count;
+}

@@ -62,10 +62,11 @@ int main(int argc, char *argv[])
     noecho();
     cbreak();
     start_color();
+    keypad(stdscr, TRUE);
     curs_set(0);
 
     // Check screen size and colour support
-    check_screen_size();
+    check_screen_size(0, 0);
     if (has_colors() == TRUE)
     {
         // Set colors

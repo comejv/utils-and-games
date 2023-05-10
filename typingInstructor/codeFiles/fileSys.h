@@ -30,10 +30,21 @@ typedef struct
     int num_files;
 } CodeFiles;
 
+// Parse urls from file and modify num_urls
 char **readUrlsFromFile(const char *file_path, int *num_urls);
+
+// Scan a directory and update G_Files with what's inside
 void readDir(char *dirPath);
+
+// Get list of available files in a languages
+// language: 0 = all, 1 = C, 2 = Python, 3 = Rust
+// See defines in fileSys.h
 CodeFiles *getFiles(int language);
+
+// Get list of all available languages
 char **availableLanguages();
+
+// Free a CodeFiles
 void freeFiles(CodeFiles *files);
 
 #endif // FILESYS_H
