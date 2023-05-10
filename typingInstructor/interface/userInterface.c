@@ -156,7 +156,7 @@ int language_screen()
 
 void wprintFileContent(const char *filepath, WINDOW **win, int pad_width)
 {
-    FILE *file = fopen("makefile", "r");
+    FILE *file = fopen(filepath, "r");
     if (!file)
     {
         verbose("[ERROR]: Failed to open file %s\n", filepath);
