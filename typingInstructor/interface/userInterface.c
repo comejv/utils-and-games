@@ -211,6 +211,7 @@ int instructor_screen()
 
     char *stats_message = "WPM: 0 --- Accuracy: 0%";
 
+    
     CodeFiles *files = getFiles(language);
     CodeFile file;
     file.language = files->files[file_choice].language;
@@ -238,12 +239,17 @@ int instructor_screen()
     wrefresh(file_browse_win);
     wrefresh(stats_win);
 
-    int c;
+    int cur_x = 0, cur_y = 7;
 
-    while ((c = getch()) != KEY_BACKSPACE)
+    mvwchgat(code_win, cur_y, cur_x, 1, A_BLINK, 3, NULL);
+    prefresh(code_win, 0, 0, 0, file_browse_win_width, screen_height - 2, screen_width - 1);
+
+    int in_char;
+    chtype c_char;
+    while ((in_char = getch()) != KEY_BACKSPACE)
     {
         static int pad_top_line = 0;
-        switch (c)
+        switch (in_char)
         {
         case 'a':
             if (pad_top_line > 0)
@@ -260,6 +266,13 @@ int instructor_screen()
             }
             break;
         default:
+            c_char = winch(code_win);
+            if (c_char == in_char)
+            {
+                wchgat(code_win, 1, A_NORMAL, 0, NULL);
+                mvwchgat(code_win, cur_y, ++cur_x, 1, A_BLINK, 3, NULL);
+            }
+            prefresh(code_win, 0, 0, 0, file_browse_win_width, screen_height - 2, screen_width - 1);
             break;
         }
     }

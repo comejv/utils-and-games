@@ -76,6 +76,7 @@ int main(int argc, char *argv[])
         init_pair(0, COLOR_BLACK, COLOR_WHITE);
         init_pair(1, COLOR_WHITE, COLOR_CYAN);
         init_pair(2, COLOR_BLACK, COLOR_RED);
+        init_pair(3, COLOR_WHITE, COLOR_GREEN);
     }
     else
     {
