@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
 
     // Clean up
     freeStringArray(urls);
-    system("clean");
+    system("clear");
 
     // Initialize curses
     initscr();
