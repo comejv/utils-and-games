@@ -56,13 +56,16 @@ int main(int argc, char *argv[])
     verbose("[INFO]: Updating file system with %s...\n", folder);
     readDir(folder);
 
+    // Clean up
+    freeStringArray(urls);
+    system("clean");
+
     // Initialize curses
     initscr();
     clear();
     noecho();
     cbreak();
     start_color();
-    keypad(stdscr, TRUE);
     curs_set(0);
 
     // Check screen size and colour support

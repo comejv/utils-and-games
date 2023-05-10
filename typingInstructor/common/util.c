@@ -62,6 +62,8 @@ size_t count_lines(FILE *fp)
         }
     }
 
+    fseek(fp, 0L, SEEK_SET);
+
     free(buffer);
     return line_count;
 }

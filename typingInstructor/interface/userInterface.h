@@ -30,7 +30,7 @@ int language_screen();
 
 // Print content of filename in WINDOW
 // Put file name at the top
-void wprintFileContent(const char *filename, WINDOW **win, int pad_width);
+size_t wprintFileContent(const char *filename, WINDOW **win, int pad_width);
 
 // Unimplemented
 int instructor_screen();

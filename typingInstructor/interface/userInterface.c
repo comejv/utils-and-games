@@ -55,6 +55,9 @@ void print_menu(WINDOW *menu_win, int highlight, char *choices[], int n_choices)
 int menu_input(WINDOW *menu_win, int highlight, char *choices[], int n_choices)
 {
     int c;
+
+    keypad(menu_win, TRUE);
+
     while (1)
     {
         c = wgetch(menu_win);
@@ -154,19 +157,22 @@ int language_screen()
     return ret;
 }
 
-void wprintFileContent(const char *filepath, WINDOW **win, int pad_width)
+size_t wprintFileContent(const char *filepath, WINDOW **win, int pad_width)
 {
     FILE *file = fopen(filepath, "r");
     if (!file)
     {
         verbose("[ERROR]: Failed to open file %s\n", filepath);
-        return;
+        return 0;
     }
 
-    char **line = NULL;
+    char *line = NULL;
+    size_t len = 0;
 
     // Count number of lines in file
     size_t num_lines = count_lines(file);
+
+    fseek(file, 0, SEEK_SET);
 
     // Initialize pad
     *win = newpad(num_lines + 7, pad_width);
@@ -176,12 +182,14 @@ void wprintFileContent(const char *filepath, WINDOW **win, int pad_width)
     mvwprintw(*win, current_line, (pad_width - strlen(filepath)) / 2, "%s", filepath);
     current_line += 3;
     // Print file content
-    while (getline(line, 0, file) != -1)
+    while (getline(&line, &len, file) != -1)
     {
         mvwprintw(*win, current_line++, 0, "%s", line);
     }
     fclose(file);
     free(line);
+
+    return num_lines;
 }
 
 int instructor_screen()
@@ -212,7 +220,7 @@ int instructor_screen()
     free(files);
 
     // Get file content
-    wprintFileContent(file.path, &code_win, code_win_width);
+    int num_lines = wprintFileContent(file.path, &code_win, code_win_width);
 
     file_browse_win = newwin(screen_height - 1, file_browse_win_width, 0, 0);
     stats_win = newwin(1, screen_width, screen_height - 1, 0);
@@ -245,7 +253,7 @@ int instructor_screen()
             }
             break;
         case 'z':
-            if (pad_top_line < screen_height - 1)
+            if (pad_top_line < num_lines + 7 - screen_height - 1)
             {
                 pad_top_line++;
                 prefresh(code_win, pad_top_line, 0, 0, file_browse_win_width, screen_height - 2, screen_width - 1);
