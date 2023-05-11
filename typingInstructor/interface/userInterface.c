@@ -178,13 +178,20 @@ size_t wprintFileContent(const char *filepath, WINDOW **win, int pad_width)
     *win = newpad(num_lines + 7, pad_width);
 
     int current_line = 4;
+    int line_length = 0, max_line_length = 0;
     // Print file name
     mvwprintw(*win, current_line, (pad_width - strlen(filepath)) / 2, "%s", filepath);
     current_line += 3;
     // Print file content
     while (getline(&line, &len, file) != -1)
     {
-        mvwprintw(*win, current_line++, 0, "%s", line);
+        line_length = strlen(line);
+        if (line_length > max_line_length)
+        {
+            max_line_length = line_length;
+            wresize(*win, num_lines + 7, max_line_length + 1);
+        }
+        mvwaddstr(*win, current_line++, 0, line);
     }
     fclose(file);
     free(line);
@@ -211,7 +218,6 @@ int instructor_screen()
 
     char *stats_message = "WPM: 0 --- Accuracy: 0%";
 
-    
     CodeFiles *files = getFiles(language);
     CodeFile file;
     file.language = files->files[file_choice].language;
@@ -222,6 +228,7 @@ int instructor_screen()
 
     // Get file content
     int num_lines = wprintFileContent(file.path, &code_win, code_win_width);
+    check_screen_size(getmaxx(code_win) + file_browse_win_width, 0);
 
     file_browse_win = newwin(screen_height - 1, file_browse_win_width, 0, 0);
     stats_win = newwin(1, screen_width, screen_height - 1, 0);
