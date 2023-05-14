@@ -1,6 +1,7 @@
 # Typing Instructor
 ## Description
 > IMPORTANT : this is a work in progress and very not ready at all, this readme is what the goal is, not the current state
+
 Typing Instructor is a command-line application designed to help programmers improve their typing skills by practicing with real-world code examples. The motivation behind this project was to create a more engaging and productive way for programmers to enhance their typing speed and accuracy while working with actual code snippets.
 
 ## Table of Contents
