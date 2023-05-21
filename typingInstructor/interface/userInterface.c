@@ -172,16 +172,14 @@ size_t wprintFileContent(const char *filepath, WINDOW **win, int pad_width)
     // Count number of lines in file
     size_t num_lines = count_lines(file);
 
-    fseek(file, 0, SEEK_SET);
-
-    // Initialize pad
     *win = newpad(num_lines + 7, pad_width);
 
     int current_line = 4;
     int line_length = 0, max_line_length = 0;
     // Print file name
     mvwprintw(*win, current_line, (pad_width - strlen(filepath)) / 2, "%s", filepath);
-    current_line += 3;
+    mvwprintw(*win, ++current_line, (pad_width - 15) / 2, "TEST 1234567890");
+    current_line += 2;
     // Print file content
     while (getline(&line, &len, file) != -1)
     {
@@ -252,8 +250,9 @@ int instructor_screen()
     prefresh(code_win, 0, 0, 0, file_browse_win_width, screen_height - 2, screen_width - 1);
 
     int in_char;
-    chtype c_char;
-    while ((in_char = getch()) != KEY_BACKSPACE)
+    char c_char;
+    int typing = 1;
+    while (typing && (in_char = getch()))
     {
         static int pad_top_line = 0;
         switch (in_char)
@@ -265,6 +264,7 @@ int instructor_screen()
                 prefresh(code_win, pad_top_line, 0, 0, file_browse_win_width, screen_height - 2, screen_width - 1);
             }
             break;
+
         case 'z':
             if (pad_top_line < num_lines + 7 - screen_height - 1)
             {
@@ -272,14 +272,35 @@ int instructor_screen()
                 prefresh(code_win, pad_top_line, 0, 0, file_browse_win_width, screen_height - 2, screen_width - 1);
             }
             break;
+
+        case 27:
+            typing = 0;
+            break;
+
+        case KEY_RESIZE:
+            getmaxyx(stdscr, screen_height, screen_width);
+            wresize(file_browse_win, screen_height - 2, screen_width - 1);
+            wresize(stats_win, screen_height - 2, screen_width - 1);
+            wclear(stats_win);
+            mvwprintw(stats_win, 0, (screen_width - 23) / 2, "%s", stats_message);
+            refresh();
+            prefresh(code_win, 0, 0, 0, file_browse_win_width, screen_height - 2, screen_width - 1);
+            wrefresh(file_browse_win);
+            wrefresh(stats_win);
+            break;
+
         default:
-            c_char = winch(code_win);
+            c_char = winch(code_win) & A_CHARTEXT;
             if (c_char == in_char)
             {
                 wchgat(code_win, 1, A_NORMAL, 0, NULL);
                 mvwchgat(code_win, cur_y, ++cur_x, 1, A_BLINK, 3, NULL);
+                prefresh(code_win, 0, 0, 0, file_browse_win_width, screen_height - 2, screen_width - 1);
             }
-            prefresh(code_win, 0, 0, 0, file_browse_win_width, screen_height - 2, screen_width - 1);
+            else
+            {
+                verbose("%c\n", in_char);
+            }
             break;
         }
     }
