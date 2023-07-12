@@ -53,6 +53,9 @@ A C program that allows you to automatically decrypt a text using the Cesar Code
 ### [Typing Instructor](typingInstructor) ![](https://img.shields.io/badge/-C-red)
 The beginning of a typing game written in C and using ncurses for a text based GUI.
 
+### [Wordle](wordle) ![](https://img.shields.io/badge/-python-blue)
+A wordle CLI game written in python.
+
 ### [Blackjack](blackjack) ![](https://img.shields.io/badge/-python-blue)
 A blackjack game written in python.
 
@@ -61,6 +64,3 @@ A programm based on linux cowsay. It allows you to print a cow with a custom mes
 
 ### [Dames](dames) ![](https://img.shields.io/badge/-oCaml-orange)
 A game of dames written in oCaml.
-
-### [Wordle](wordle) ![](https://img.shields.io/badge/-python-blue)
-A wordle CLI game written in python.
