@@ -49,6 +49,10 @@ A C program that allows you to automatically decrypt a text using the Cesar Code
 ***
 
 ## Games
+
+### [Typing Instructor](typingInstructor) ![](https://img.shields.io/badge/-C-red)
+The beginning of a typing game written in C and using ncurses for a text based GUI.
+
 ### [Blackjack](blackjack) ![](https://img.shields.io/badge/-python-blue)
 A blackjack game written in python.
 
