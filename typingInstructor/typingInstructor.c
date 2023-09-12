@@ -36,28 +36,33 @@ int main(int argc, char *argv[])
         verbose("[WARNING]: No url read from conf file\n");
     }
 
-    // Check that folder exists
+    // Check that code_folder exists
     struct stat sb;
-    char folder[] = "data/code_examples";
-    if (stat(folder, &sb) == -1)
+    char code_folder[100];
+    int home_folder_len = (strrchr(argv[0], '/') + 1 - argv[0]) / sizeof(char);
+    strncpy(code_folder, argv[0], home_folder_len);
+    code_folder[home_folder_len] = '\0';
+    strcat(code_folder, "data/code_examples");
+    if (stat(code_folder, &sb) == -1)
     {
-        mkdir("data/code_examples", 0777);
+        mkdir(code_folder, 0777);
         verbose("[INFO]: Created data/code_examples\n");
     }
 
     // Download urls
     for (int i = 0; i < num_urls; ++i)
     {
-        download_raw_file(urls[i], folder);
-        verbose("[INFO]: Downloaded %s\n", urls[i]);
+        int res = download_raw_file(urls[i], code_folder);
+        if (!res)
+            verbose("[INFO]: Downloaded %s\n", urls[i]);
     }
 
     // Update file sys
-    verbose("[INFO]: Updating file system with %s...\n", folder);
-    readDir(folder);
+    verbose("[INFO]: Updating file system with %s...\n", code_folder);
+    readDir(code_folder);
 
     // Clean up
-    freeStringArray(urls);
+    freeStringArray(urls, num_urls);
     system("clear");
 
     // Initialize curses

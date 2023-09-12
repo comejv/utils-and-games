@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -std=gnu99 -Wno-sizeof-pointer-div 
+CFLAGS = -Wall -Wextra -std=gnu99 -Wno-sizeof-pointer-div -g
 LDFLAGS = -lncurses -lcurl
 
 OBJ_DIR = obj

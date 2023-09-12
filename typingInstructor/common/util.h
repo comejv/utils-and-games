@@ -19,7 +19,7 @@ int get_VERBOSE();
 void verbose(char *fmt, ...);
 
 // Free an array of strings
-void freeStringArray(char **array);
+void freeStringArray(char **array, int num);
 
 // Count number of lines in a file
 size_t count_lines(FILE *fp);

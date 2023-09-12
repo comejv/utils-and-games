@@ -39,7 +39,7 @@ int download_raw_file(const char *url, const char *output_dir)
     if (access(output_path, F_OK) == 0)
     {
         verbose("[INFO]: File already exists, not downloaded: %s\n", output_path);
-        return 0;
+        return 2;
     }
 
     fp = fopen(output_path, "wb");

@@ -23,9 +23,9 @@ void verbose(char *fmt, ...)
     }
 }
 
-void freeStringArray(char **array)
+void freeStringArray(char **array, int num)
 {
-    for (int i = 0; array[i]; ++i)
+    for (int i = 0; i < num; ++i)
     {
         free(array[i]);
     }
